@@ -111,11 +111,19 @@ def match_students(students, netids, graph):
     return matching
 
 def print_matching(students, matching):
+    matched = set()
     for index in matching:
         name1 = students[index].name
         name2 = students[matching[index]].name
         if name1 <= name2:
             print(name1 + " matched with " + name2)
+        matched.add(name1)
+
+    for student in students:
+        if student.name not in matched:
+            print("\033[91m" + "\n Could not match: " + student.name 
+                + ". Make specific arrangements." + "\033[0m")
+    
 
 def save_to_csv(filename, matching, students):
     with open(filename, 'w', newline='') as f:
@@ -140,7 +148,7 @@ if __name__ == "__main__":
         # Make sure the input is valid
         print("Invalid input given")
         exit()
-    if_csv = bool(if_csv)
+    if_csv = bool(if_csv == 'true')
     output_filename = None
     # Take a filename for the csv
     if if_csv:
@@ -154,7 +162,8 @@ if __name__ == "__main__":
         # trying full matching
         if student_num % 2 == 1:
             student_num -= 1
-            print("WARNING: Odd number of students, will try to match everyone except one student!")
+            print("\033[93m" + "WARNING: Odd number of students, "+
+            "will try to match everyone except one student!" + "\033[0m")
         # Max cutoff should be the min of the maxes across each student
         start_cutoff = int(np.min(np.max(suit_matrix, axis = 0)))
         for cutoff in range(start_cutoff, 0, -1):
